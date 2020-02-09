@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mBluetootheLeScanner: BluetoothLeScanner
 
     private lateinit var scanSetting: ScanSettings
-
+    private var listBLE = mutableListOf<String>()
     private var scanning = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +61,11 @@ class MainActivity : AppCompatActivity() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             super.onScanResult(callbackType, result)
             Timber.e("Scan Result : ${result?.rssi} ${result?.device}")
+            if (this@MainActivity.listBLE.indexOf(result?.device.toString()) != -1) {
+                return Timber.e("Sudah pernah diinput")
+            } else {
+                this@MainActivity.listBLE.add(result?.device.toString())
+            }
         }
     }
 
@@ -122,6 +127,9 @@ class MainActivity : AppCompatActivity() {
         Timber.e("Stop Scanning")
         this.mBluetootheLeScanner.stopScan(scanCallback)
         this.scanning = false
+        this.listBLE.forEach {
+            Timber.e("BLE Device : $it")
+        }
 
 //        this.startScan()
     }

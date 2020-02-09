@@ -2,7 +2,7 @@ package com.binus.paper.model
 
 import com.google.gson.annotations.SerializedName
 
-data class Locationresponse(
+data class LocationResponse(
     @SerializedName("status")
     val status: String,
 
