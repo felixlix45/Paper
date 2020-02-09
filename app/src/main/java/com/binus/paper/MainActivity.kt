@@ -8,7 +8,6 @@ import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -25,8 +24,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var mBluetoothAdapter: BluetoothAdapter
     private lateinit var mBluetootheLeScanner: BluetoothLeScanner
-    private lateinit var mHandler: Handler
-    private lateinit var mBLEHandler: Handler
 
     private lateinit var scanSetting: ScanSettings
 
@@ -62,7 +59,6 @@ class MainActivity : AppCompatActivity() {
 
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             super.onScanResult(callbackType, result)
-            val device = result?.device
             Timber.e("Scan Result : ${result?.rssi} ${result?.device}")
         }
     }
