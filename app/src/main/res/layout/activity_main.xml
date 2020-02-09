@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+        <Button
+            android:id="@+id/btn_start_scanning"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:onClick="@{(view) -> activity.handleClick(view)}"
+            android:text="@string/start_scan_button"
+            app:layout_constraintBottom_toTopOf="@id/btn_stop_scanning"
+            app:layout_constraintEnd_toEndOf="@id/btn_stop_scanning"
+            app:layout_constraintStart_toStartOf="@id/btn_stop_scanning"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btn_stop_scanning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{(view) -> activity.handleClick(view)}"
+            android:text="@string/stop_scan_button"
+            app:layout_constraintBottom_toTopOf="@id/btn_map"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_start_scanning"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <Button
+            android:id="@+id/btn_map"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:onClick="@{(view) -> activity.handleClick(view)}"
+            android:text="@string/map_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/btn_stop_scanning"
+            app:layout_constraintStart_toStartOf="@id/btn_stop_scanning"
+            app:layout_constraintTop_toBottomOf="@id/btn_stop_scanning" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <data>
+
+        <variable
+            name="activity"
+            type="com.binus.paper.MainActivity" />
+    </data>
+</layout>
