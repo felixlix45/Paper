@@ -6,6 +6,7 @@ import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
@@ -128,7 +129,7 @@ class MainActivity : AppCompatActivity() {
     fun handleClick(view: View) {
         when (view) {
             this.binding.btnMap -> {
-                Timber.e("Hello World")
+                startActivity(Intent(this, MapsActivity::class.java))
             }
             this.binding.btnStartScanning -> {
                 Timber.e("Scan")
