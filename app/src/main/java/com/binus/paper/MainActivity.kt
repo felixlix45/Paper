@@ -162,8 +162,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             this.binding.btnStopScanning -> {
-                mBluetootheLeScanner.stopScan(scanCallback)
-                this.scanning = false
+                this.stopScan()
             }
         }
     }
