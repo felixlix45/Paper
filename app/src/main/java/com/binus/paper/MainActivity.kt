@@ -11,8 +11,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.binus.paper.databinding.ActivityMainBinding
 import com.binus.paper.model.LocationRequest
+import com.binus.paper.viewmodel.LocationViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -28,16 +31,49 @@ class MainActivity : AppCompatActivity() {
     private lateinit var scanSetting: ScanSettings
     private var scannedBLE = mutableListOf<String>()
     private var scanning = false
-    private var listBLE = mutableListOf(BLEBeacon.beaconAddress1, BLEBeacon.beaconAddress2, BLEBeacon.beaconAddress3, BLEBeacon.beaconAddress4, BLEBeacon.beaconAddress5, BLEBeacon.beaconAddress6, BLEBeacon.beaconAddress7, BLEBeacon.beaconAddress8, BLEBeacon.beaconAddress9, BLEBeacon.beaconAddress10, BLEBeacon.beaconAddress11, BLEBeacon.beaconAddress12, BLEBeacon.beaconAddress13, BLEBeacon.beaconAddress14, BLEBeacon.beaconAddress15, BLEBeacon.beaconAddress16, BLEBeacon.beaconAddress17, BLEBeacon.beaconAddress18, BLEBeacon.beaconAddress19, BLEBeacon.beaconAddress20, BLEBeacon.beaconAddress21, BLEBeacon.beaconAddress22, BLEBeacon.beaconAddress23, BLEBeacon.testBeacon)
+    private var listBLE = mutableListOf(
+        BLEBeacon.beaconAddress1,
+        BLEBeacon.beaconAddress2,
+        BLEBeacon.beaconAddress3,
+        BLEBeacon.beaconAddress4,
+        BLEBeacon.beaconAddress5,
+        BLEBeacon.beaconAddress6,
+        BLEBeacon.beaconAddress7,
+        BLEBeacon.beaconAddress8,
+        BLEBeacon.beaconAddress9,
+        BLEBeacon.beaconAddress10,
+        BLEBeacon.beaconAddress11,
+        BLEBeacon.beaconAddress12,
+        BLEBeacon.beaconAddress13,
+        BLEBeacon.beaconAddress14,
+        BLEBeacon.beaconAddress15,
+        BLEBeacon.beaconAddress16,
+        BLEBeacon.beaconAddress17,
+        BLEBeacon.beaconAddress18,
+        BLEBeacon.beaconAddress19,
+        BLEBeacon.beaconAddress20,
+        BLEBeacon.beaconAddress21,
+        BLEBeacon.beaconAddress22,
+        BLEBeacon.beaconAddress23,
+        BLEBeacon.testBeacon
+    )
     private var filterBLE = mutableListOf<ScanFilter>()
     private var request = mutableListOf<LocationRequest>()
+
+    private lateinit var viewModel: LocationViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         this.setDataBinding()
+
         Timber.plant(Timber.DebugTree())
 
+        this.viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.NewInstanceFactory()
+        ).get(LocationViewModel::class.java)
+        this.bindViewModel()
         if (BluetoothAdapter.getDefaultAdapter() != null) {
             this.setFilter()
             this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
@@ -53,6 +89,12 @@ class MainActivity : AppCompatActivity() {
             val scanFilter = ScanFilter.Builder().setDeviceAddress(it).build()
             filterBLE.add(scanFilter)
         }
+    }
+
+    private fun bindViewModel() {
+        this.viewModel.response.observe(this, Observer { data ->
+            Timber.e("Response $data")
+        })
     }
 
     private fun setDataBinding() {
@@ -134,7 +176,7 @@ class MainActivity : AppCompatActivity() {
         this.scanning = true
         // Stop scan after 15 seconds
         GlobalScope.launch {
-            delay(15000)
+            delay(10000)
             this@MainActivity.stopScan()
         }
     }
@@ -146,6 +188,9 @@ class MainActivity : AppCompatActivity() {
         this.request.forEach {
             Timber.e("Request Data : ${it.id}, ${it.rssi}")
         }
+        this.viewModel.test()
+        this.viewModel.setLocation(request)
+
     }
 
     fun handleClick(view: View) {
