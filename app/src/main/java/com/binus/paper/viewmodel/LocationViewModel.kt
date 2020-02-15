@@ -14,7 +14,7 @@ class LocationViewModel : ViewModel() {
     private lateinit var _location: MutableLiveData<LocationResponse>
     val location: LiveData<LocationResponse> = this._location
 
-    val baseURL = "https://indoornavigation-260718.appspot.com/api"
+    private val baseURL = "https://indoornavigation-260718.appspot.com/api"
 
     fun getLocation(request: LocationRequest) {
 

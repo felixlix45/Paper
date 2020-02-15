@@ -2,14 +2,12 @@ package com.binus.paper
 
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.le.BluetoothLeScanner
-import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanResult
-import android.bluetooth.le.ScanSettings
+import android.bluetooth.le.*
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -27,8 +25,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mBluetootheLeScanner: BluetoothLeScanner
 
     private lateinit var scanSetting: ScanSettings
-    private var listBLE = mutableListOf<String>()
+    private var scannedBLE = mutableListOf<String>()
     private var scanning = false
+    private var listBLE = mutableListOf<String>(BLEBeacon.beaconAddress1, BLEBeacon.beaconAddress2, BLEBeacon.beaconAddress3, BLEBeacon.beaconAddress4, BLEBeacon.beaconAddress5, BLEBeacon.beaconAddress6, BLEBeacon.beaconAddress7, BLEBeacon.beaconAddress8, BLEBeacon.beaconAddress9, BLEBeacon.beaconAddress10, BLEBeacon.beaconAddress11, BLEBeacon.beaconAddress12, BLEBeacon.beaconAddress13, BLEBeacon.beaconAddress14, BLEBeacon.beaconAddress15, BLEBeacon.beaconAddress16, BLEBeacon.beaconAddress17, BLEBeacon.beaconAddress18, BLEBeacon.beaconAddress19, BLEBeacon.beaconAddress20, BLEBeacon.beaconAddress21, BLEBeacon.beaconAddress22, BLEBeacon.beaconAddress23)
+
+    private var filterBLE = mutableListOf<ScanFilter>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,8 +37,21 @@ class MainActivity : AppCompatActivity() {
         this.setDataBinding()
         Timber.plant(Timber.DebugTree())
 
-        this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-        this.mBluetootheLeScanner = mBluetoothAdapter.bluetoothLeScanner
+        if (BluetoothAdapter.getDefaultAdapter() != null) {
+            this.setFilter()
+            this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+            this.mBluetootheLeScanner = mBluetoothAdapter.bluetoothLeScanner
+        } else {
+            Toast.makeText(this, "Device doesn't support bluetooth", Toast.LENGTH_SHORT).show()
+        }
+
+    }
+
+    private fun setFilter() {
+        this.listBLE.forEach {
+            val scanFilter = ScanFilter.Builder().setDeviceAddress(it).build()
+            filterBLE.add(scanFilter)
+        }
     }
 
     private fun setDataBinding() {
@@ -61,10 +75,10 @@ class MainActivity : AppCompatActivity() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             super.onScanResult(callbackType, result)
             Timber.e("Scan Result : ${result?.rssi} ${result?.device}")
-            if (this@MainActivity.listBLE.indexOf(result?.device.toString()) != -1) {
+            if (this@MainActivity.scannedBLE.indexOf(result?.device.toString()) != -1) {
                 return Timber.e("Sudah pernah diinput")
             } else {
-                this@MainActivity.listBLE.add(result?.device.toString())
+                this@MainActivity.scannedBLE.add(result?.device.toString())
             }
         }
     }
@@ -114,7 +128,7 @@ class MainActivity : AppCompatActivity() {
         this.scanSetting =
                 ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_POWER).build()
         // TODO: Add filter
-        this.mBluetootheLeScanner.startScan(null, scanSetting, scanCallback)
+        this.mBluetootheLeScanner.startScan(this.filterBLE, this.scanSetting, this.scanCallback)
         this.scanning = true
         // Stop scan after 5 seconds
         GlobalScope.launch {
@@ -127,7 +141,7 @@ class MainActivity : AppCompatActivity() {
         Timber.e("Stop Scanning")
         this.mBluetootheLeScanner.stopScan(scanCallback)
         this.scanning = false
-        this.listBLE.forEach {
+        this.scannedBLE.forEach {
             Timber.e("BLE Device : $it")
         }
 

@@ -6,8 +6,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -35,8 +34,26 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap = googleMap
 
         // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        val binus = LatLng(-6.201807, 106.781834)
+        mMap.addMarker(MarkerOptions().position(binus).title("Marker in BINUS"))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(binus, 20F))
+        mMap.setMaxZoomPreference(50F)
+        mMap.setMinZoomPreference(5F)
+//        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.))
+
+
+        val anchor = LatLngBounds(
+            LatLng(-6.201789, 106.781723),
+            LatLng(-6.201778, 106.781861)
+        )
+
+        val overlayMap2 = GroundOverlayOptions()
+            .image(BitmapDescriptorFactory.fromResource(R.drawable.map))
+            .anchor(0F, 1F)
+            .position(LatLng(-6.201973, 106.781782), 11F, 21F)
+            .bearing(-5F)
+
+        this.mMap.addGroundOverlay(overlayMap2)
+
     }
 }
