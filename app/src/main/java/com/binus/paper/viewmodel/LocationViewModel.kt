@@ -16,7 +16,7 @@ class LocationViewModel : ViewModel() {
 
     private val baseURL = "https://indoornavigation-260718.appspot.com/api"
 
-    fun getLocation(request: LocationRequest) {
+    fun getLocation(request: List<LocationRequest>) {
 
         val retrofit = Retrofit.Builder()
             .baseUrl(baseURL)

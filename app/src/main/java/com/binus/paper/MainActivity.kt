@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.binus.paper.databinding.ActivityMainBinding
+import com.binus.paper.model.LocationRequest
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private var scanning = false
     private var listBLE = mutableListOf(BLEBeacon.beaconAddress1, BLEBeacon.beaconAddress2, BLEBeacon.beaconAddress3, BLEBeacon.beaconAddress4, BLEBeacon.beaconAddress5, BLEBeacon.beaconAddress6, BLEBeacon.beaconAddress7, BLEBeacon.beaconAddress8, BLEBeacon.beaconAddress9, BLEBeacon.beaconAddress10, BLEBeacon.beaconAddress11, BLEBeacon.beaconAddress12, BLEBeacon.beaconAddress13, BLEBeacon.beaconAddress14, BLEBeacon.beaconAddress15, BLEBeacon.beaconAddress16, BLEBeacon.beaconAddress17, BLEBeacon.beaconAddress18, BLEBeacon.beaconAddress19, BLEBeacon.beaconAddress20, BLEBeacon.beaconAddress21, BLEBeacon.beaconAddress22, BLEBeacon.beaconAddress23, BLEBeacon.testBeacon)
     private var filterBLE = mutableListOf<ScanFilter>()
+    private var request = mutableListOf<LocationRequest>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +79,8 @@ class MainActivity : AppCompatActivity() {
             if (this@MainActivity.scannedBLE.indexOf(result?.device.toString()) != -1) {
                 return Timber.e("Sudah pernah diinput")
             } else {
+                this@MainActivity.request.add(LocationRequest(result?.device.toString(), result?.rssi?.toDouble()
+                        ?: -80.0))
                 this@MainActivity.scannedBLE.add(result?.device.toString())
             }
         }
@@ -126,7 +130,6 @@ class MainActivity : AppCompatActivity() {
         Timber.e("Start Scanning")
         this.scanSetting =
                 ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_POWER).build()
-        // TODO: Add filter
         this.mBluetootheLeScanner.startScan(this.filterBLE, this.scanSetting, this.scanCallback)
         this.scanning = true
         // Stop scan after 15 seconds
@@ -140,11 +143,9 @@ class MainActivity : AppCompatActivity() {
         Timber.e("Stop Scanning")
         this.mBluetootheLeScanner.stopScan(scanCallback)
         this.scanning = false
-        this.scannedBLE.forEach {
-            Timber.e("BLE Device : $it")
+        this.request.forEach {
+            Timber.e("Request Data : ${it.id}, ${it.rssi}")
         }
-
-//        this.startScan()
     }
 
     fun handleClick(view: View) {
