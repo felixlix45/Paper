@@ -24,5 +24,6 @@ object BLEBeacon {
     const val beaconAddress7 = "D9:41:FA:1F:14:2A"
     const val beaconAddress8 = "EF:C0:78:D1:38:FA"
     const val beaconAddress9 = "D5:9B:2C:0E:85:9D"
+    const val testBeacon = "C1:E2:51:29:F9:78"
 
 }

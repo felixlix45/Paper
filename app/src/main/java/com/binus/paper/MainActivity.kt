@@ -27,8 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var scanSetting: ScanSettings
     private var scannedBLE = mutableListOf<String>()
     private var scanning = false
-    private var listBLE = mutableListOf<String>(BLEBeacon.beaconAddress1, BLEBeacon.beaconAddress2, BLEBeacon.beaconAddress3, BLEBeacon.beaconAddress4, BLEBeacon.beaconAddress5, BLEBeacon.beaconAddress6, BLEBeacon.beaconAddress7, BLEBeacon.beaconAddress8, BLEBeacon.beaconAddress9, BLEBeacon.beaconAddress10, BLEBeacon.beaconAddress11, BLEBeacon.beaconAddress12, BLEBeacon.beaconAddress13, BLEBeacon.beaconAddress14, BLEBeacon.beaconAddress15, BLEBeacon.beaconAddress16, BLEBeacon.beaconAddress17, BLEBeacon.beaconAddress18, BLEBeacon.beaconAddress19, BLEBeacon.beaconAddress20, BLEBeacon.beaconAddress21, BLEBeacon.beaconAddress22, BLEBeacon.beaconAddress23)
-
+    private var listBLE = mutableListOf(BLEBeacon.beaconAddress1, BLEBeacon.beaconAddress2, BLEBeacon.beaconAddress3, BLEBeacon.beaconAddress4, BLEBeacon.beaconAddress5, BLEBeacon.beaconAddress6, BLEBeacon.beaconAddress7, BLEBeacon.beaconAddress8, BLEBeacon.beaconAddress9, BLEBeacon.beaconAddress10, BLEBeacon.beaconAddress11, BLEBeacon.beaconAddress12, BLEBeacon.beaconAddress13, BLEBeacon.beaconAddress14, BLEBeacon.beaconAddress15, BLEBeacon.beaconAddress16, BLEBeacon.beaconAddress17, BLEBeacon.beaconAddress18, BLEBeacon.beaconAddress19, BLEBeacon.beaconAddress20, BLEBeacon.beaconAddress21, BLEBeacon.beaconAddress22, BLEBeacon.beaconAddress23, BLEBeacon.testBeacon)
     private var filterBLE = mutableListOf<ScanFilter>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -130,7 +129,7 @@ class MainActivity : AppCompatActivity() {
         // TODO: Add filter
         this.mBluetootheLeScanner.startScan(this.filterBLE, this.scanSetting, this.scanCallback)
         this.scanning = true
-        // Stop scan after 5 seconds
+        // Stop scan after 15 seconds
         GlobalScope.launch {
             delay(15000)
             this@MainActivity.stopScan()
