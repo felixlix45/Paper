@@ -2,6 +2,7 @@ package com.binus.paper
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.binus.paper.model.DataLocation
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -11,14 +12,22 @@ import com.google.android.gms.maps.model.*
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
-
+    private var latitude: Double = 0.0
+    private var longitude: Double = 0.0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
-                .findFragmentById(R.id.map) as SupportMapFragment
+            .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+        val data = intent.getParcelableExtra(latLong) as DataLocation
+        latitude = data.latitude
+        longitude = data.longitude
+    }
+
+    companion object {
+        const val latLong = "EXTRA_LAT_LONG"
     }
 
     /**
@@ -34,7 +43,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap = googleMap
 
         // Add a marker in Sydney and move the camera
-        val binus = LatLng(-6.201807, 106.781834)
+        val binus = LatLng(latitude, longitude)
         mMap.addMarker(MarkerOptions().position(binus).title("Marker in BINUS"))
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(binus, 20F))
         mMap.setMaxZoomPreference(50F)

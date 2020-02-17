@@ -85,8 +85,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setFilter() {
-        this.listBLE.forEach {
-            val scanFilter = ScanFilter.Builder().setDeviceAddress(it).build()
+        this.listBLE.forEach { beacon ->
+            val scanFilter = ScanFilter.Builder().setDeviceAddress(beacon).build()
             filterBLE.add(scanFilter)
         }
     }
@@ -94,6 +94,10 @@ class MainActivity : AppCompatActivity() {
     private fun bindViewModel() {
         this.viewModel.response.observe(this, Observer { data ->
             Timber.e("Response $data")
+            this.binding.pbLocating.visibility = View.GONE
+            val intent = Intent(this, MapsActivity::class.java)
+            intent.putExtra(MapsActivity.latLong, data.data)
+            startActivity(intent)
         })
     }
 
@@ -170,6 +174,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun startScan() {
         Timber.e("Start Scanning")
+        this.binding.pbLocating.visibility = View.VISIBLE
         this.scanSetting =
                 ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_POWER).build()
         this.mBluetootheLeScanner.startScan(this.filterBLE, this.scanSetting, this.scanCallback)
@@ -188,7 +193,6 @@ class MainActivity : AppCompatActivity() {
         this.request.forEach {
             Timber.e("Request Data : ${it.id}, ${it.rssi}")
         }
-        this.viewModel.test()
         this.viewModel.setLocation(request)
 
     }

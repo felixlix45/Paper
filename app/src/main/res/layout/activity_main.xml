@@ -21,6 +21,16 @@
             app:layout_constraintStart_toStartOf="@id/btn_stop_scanning"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ProgressBar
+            android:id="@+id/pb_locating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/btn_start_scanning"
+            app:layout_constraintStart_toEndOf="@id/btn_start_scanning"
+            app:layout_constraintTop_toTopOf="@id/btn_start_scanning" />
+
         <Button
             android:id="@+id/btn_stop_scanning"
             android:layout_width="wrap_content"

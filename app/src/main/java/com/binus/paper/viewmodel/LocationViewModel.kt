@@ -43,9 +43,4 @@ class LocationViewModel : ViewModel() {
             }
         })
     }
-
-    fun test() {
-        Timber.e("TestViewModel")
-    }
-
 }

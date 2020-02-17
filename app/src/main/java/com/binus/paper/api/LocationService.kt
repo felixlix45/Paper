@@ -7,6 +7,6 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface LocationService {
-    @POST("/position")
+    @POST("position")
     fun getLocation(@Body request: List<LocationRequest>): Call<LocationResponse>
 }
