@@ -37,22 +37,11 @@
             android:layout_height="wrap_content"
             android:onClick="@{(view) -> activity.handleClick(view)}"
             android:text="@string/stop_scan_button"
-            app:layout_constraintBottom_toTopOf="@id/btn_map"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btn_start_scanning"
             app:layout_constraintVertical_chainStyle="packed" />
-
-        <Button
-            android:id="@+id/btn_map"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:onClick="@{(view) -> activity.handleClick(view)}"
-            android:text="@string/map_button"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/btn_stop_scanning"
-            app:layout_constraintStart_toStartOf="@id/btn_stop_scanning"
-            app:layout_constraintTop_toBottomOf="@id/btn_stop_scanning" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

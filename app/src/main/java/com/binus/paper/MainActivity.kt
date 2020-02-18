@@ -188,20 +188,27 @@ class MainActivity : AppCompatActivity() {
 
     private fun stopScan() {
         Timber.e("Stop Scanning")
-        this.mBluetootheLeScanner.stopScan(scanCallback)
-        this.scanning = false
-        this.request.forEach {
-            Timber.e("Request Data : ${it.id}, ${it.rssi}")
+        if (scannedBLE.size == 0) {
+            runOnUiThread { Toast.makeText(this, "Tidak ada BLE di temukan", Toast.LENGTH_SHORT).show() }
+        } else {
+            runOnUiThread {
+                this.request.forEach {
+                    Timber.e("Request Data : ${it.id}, ${it.rssi}")
+                }
+                this.scannedBLE = mutableListOf()
+                this.viewModel.setLocation(request)
+            }
         }
-        this.viewModel.setLocation(request)
+        runOnUiThread {
+            this.binding.pbLocating.visibility = View.GONE
+            this.mBluetootheLeScanner.stopScan(scanCallback)
+            this.scanning = false
+        }
 
     }
 
     fun handleClick(view: View) {
         when (view) {
-            this.binding.btnMap -> {
-                startActivity(Intent(this, MapsActivity::class.java))
-            }
             this.binding.btnStartScanning -> {
                 Timber.e("Scan")
                 if (this.reqPermission()) {
