@@ -31,31 +31,57 @@ class MainActivity : AppCompatActivity() {
     private lateinit var scanSetting: ScanSettings
     private var scannedBLE = mutableListOf<String>()
     private var scanning = false
+
+    private var mapBLE = hashMapOf(
+            "Beacon1" to "D5:70:BC:F4:83:FA",
+            "Beacon2" to "D8:8F:D4:81:B3:26",
+            "Beacon3" to "D7:87:B3:E3:6B:82",
+            "Beacon4" to "EF:55:2F:7A:63:25",
+            "Beacon5" to "D9:1B:72:4A:1A:DF",
+            "Beacon6" to "EF:2D:EB:72:D0:A3",
+            "Beacon7" to "D9:41:FA:1F:14:2A",
+            "Beacon8" to "EF:C0:78:D1:38:FA",
+            "Beacon9" to "D5:9B:2C:0E:85:9D",
+            "Beacon10" to "C6:16:71:78:24:8B",
+            "Beacon11" to "D1:0D:AD:59:E8:6A",
+            "Beacon12" to "EA:2C:88:79:8A:86",
+            "Beacon13" to "C5:D9:51:0D:20:C5",
+            "Beacon14" to "C4:D9:07:D9:A2:15",
+            "Beacon15" to "F0:18:5C:82:B8:F3",
+            "Beacon16" to "D3:E9:01:4D:95:89",
+            "Beacon17" to "C8:B5:3D:46:5D:39",
+            "Beacon18" to "DD:AF:51:AB:8C:E6",
+            "Beacon19" to "F3:4E:74:21:E0:FB",
+            "Beacon20" to "EB:7F:E5:60:FA:DC",
+            "Beacon22" to "EA:35:B7:36:96:12",
+            "Beacon23" to "CB:78:48:32:AD:52",
+            "BeaconTest" to "C1:E2:51:29:F9:78"
+    )
     private var listBLE = mutableListOf(
-        BLEBeacon.beaconAddress1,
-        BLEBeacon.beaconAddress2,
-        BLEBeacon.beaconAddress3,
-        BLEBeacon.beaconAddress4,
-        BLEBeacon.beaconAddress5,
-        BLEBeacon.beaconAddress6,
-        BLEBeacon.beaconAddress7,
-        BLEBeacon.beaconAddress8,
-        BLEBeacon.beaconAddress9,
-        BLEBeacon.beaconAddress10,
-        BLEBeacon.beaconAddress11,
-        BLEBeacon.beaconAddress12,
-        BLEBeacon.beaconAddress13,
-        BLEBeacon.beaconAddress14,
-        BLEBeacon.beaconAddress15,
-        BLEBeacon.beaconAddress16,
-        BLEBeacon.beaconAddress17,
-        BLEBeacon.beaconAddress18,
-        BLEBeacon.beaconAddress19,
-        BLEBeacon.beaconAddress20,
-        BLEBeacon.beaconAddress21,
-        BLEBeacon.beaconAddress22,
-        BLEBeacon.beaconAddress23,
-        BLEBeacon.testBeacon
+            BLEBeacon.beaconAddress1,
+            BLEBeacon.beaconAddress2,
+            BLEBeacon.beaconAddress3,
+            BLEBeacon.beaconAddress4,
+            BLEBeacon.beaconAddress5,
+            BLEBeacon.beaconAddress6,
+            BLEBeacon.beaconAddress7,
+            BLEBeacon.beaconAddress8,
+            BLEBeacon.beaconAddress9,
+            BLEBeacon.beaconAddress10,
+            BLEBeacon.beaconAddress11,
+            BLEBeacon.beaconAddress12,
+            BLEBeacon.beaconAddress13,
+            BLEBeacon.beaconAddress14,
+            BLEBeacon.beaconAddress15,
+            BLEBeacon.beaconAddress16,
+            BLEBeacon.beaconAddress17,
+            BLEBeacon.beaconAddress18,
+            BLEBeacon.beaconAddress19,
+            BLEBeacon.beaconAddress20,
+            BLEBeacon.beaconAddress21,
+            BLEBeacon.beaconAddress22,
+            BLEBeacon.beaconAddress23,
+            BLEBeacon.testBeacon
     )
     private var filterBLE = mutableListOf<ScanFilter>()
     private var request = mutableListOf<LocationRequest>()
@@ -70,8 +96,8 @@ class MainActivity : AppCompatActivity() {
         Timber.plant(Timber.DebugTree())
 
         this.viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.NewInstanceFactory()
+                this,
+                ViewModelProvider.NewInstanceFactory()
         ).get(LocationViewModel::class.java)
         this.bindViewModel()
         if (BluetoothAdapter.getDefaultAdapter() != null) {
@@ -95,9 +121,15 @@ class MainActivity : AppCompatActivity() {
         this.viewModel.response.observe(this, Observer { data ->
             Timber.e("Response $data")
             this.binding.pbLocating.visibility = View.GONE
+            this.request = mutableListOf()
             val intent = Intent(this, MapsActivity::class.java)
             intent.putExtra(MapsActivity.latLong, data.data)
             startActivity(intent)
+        })
+
+        this.viewModel.errorMessage.observe(this, Observer { error ->
+            Timber.e("Error message $error")
+            this.binding.errorMessageTextView.text = error
         })
     }
 
@@ -187,24 +219,35 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun stopScan() {
-        Timber.e("Stop Scanning")
+        Timber.e("Stop Scanning, ${scannedBLE.size}")
         if (scannedBLE.size == 0) {
-            runOnUiThread { Toast.makeText(this, "Tidak ada BLE di temukan", Toast.LENGTH_SHORT).show() }
+            runOnUiThread {
+                Toast.makeText(this, "Tidak ada BLE di temukan", Toast.LENGTH_SHORT).show()
+
+                this.binding.pbLocating.visibility = View.GONE
+                this.mBluetootheLeScanner.stopScan(scanCallback)
+                this.scanning = false
+            }
         } else {
             runOnUiThread {
-                this.request.forEach {
-                    Timber.e("Request Data : ${it.id}, ${it.rssi}")
+                Toast.makeText(this, "Ada ${scannedBLE.size} ditemukan", Toast.LENGTH_SHORT).show()
+                this.request.forEachIndexed { _, loc ->
+                    this.mapBLE.forEach { (key, value) ->
+                        if (loc.id == value) {
+                            loc.id = key
+                            return@forEach
+                        }
+                    }
+                    Timber.e("Request $request")
                 }
+                this.binding.errorMessageTextView.text = "Sukses"
+                this.binding.pbLocating.visibility = View.GONE
+                this.mBluetootheLeScanner.stopScan(scanCallback)
+                this.scanning = false
                 this.scannedBLE = mutableListOf()
                 this.viewModel.setLocation(request)
             }
         }
-        runOnUiThread {
-            this.binding.pbLocating.visibility = View.GONE
-            this.mBluetootheLeScanner.stopScan(scanCallback)
-            this.scanning = false
-        }
-
     }
 
     fun handleClick(view: View) {
@@ -215,6 +258,7 @@ class MainActivity : AppCompatActivity() {
                     if (scanning) {
                         this.stopScan()
                     }
+                    this.binding.errorMessageTextView.text = ""
                     this.startScan()
                 }
             }

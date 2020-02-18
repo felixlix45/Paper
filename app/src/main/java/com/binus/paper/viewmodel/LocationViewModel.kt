@@ -20,6 +20,9 @@ class LocationViewModel : ViewModel() {
     private val _response = MutableLiveData<LocationResponse>()
     val response: LiveData<LocationResponse> = this._response
 
+    private val _errorMessage = MutableLiveData<String>()
+    val errorMessage: LiveData<String> = this._errorMessage
+
     fun setLocation(request: List<LocationRequest>) {
         Timber.e("Setlocation")
         val retrofit = Retrofit.Builder()
@@ -31,7 +34,7 @@ class LocationViewModel : ViewModel() {
         val call = api.getLocation(request)
         call.enqueue(object : Callback<LocationResponse> {
             override fun onFailure(call: Call<LocationResponse>, t: Throwable) {
-                Timber.e("Error API : $t")
+                this@LocationViewModel._errorMessage.postValue(t.toString())
             }
 
             override fun onResponse(
